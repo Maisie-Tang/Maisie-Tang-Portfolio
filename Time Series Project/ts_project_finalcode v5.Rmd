@@ -1,0 +1,552 @@
+---
+title: "time series project code"
+author: "Mengze(Maisie) Tang"
+date: "11/19/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#data
+```{r}
+#install.packages("fBasics")
+#install.packages("fGarch")
+#install.packages("fpp2")
+#install.packages("tsensembler")
+
+library(fBasics)
+library(fGarch)
+library(fpp2)
+library(tsensembler)
+
+
+library(data.table)
+tb.rates=read.csv("tb_rates.csv",header=T)
+tb <- ts(tb.rates$tb_rates, frequency=12, start=c(1975, 1))
+tb_train1 <- window(tb, end = c(2017,12))
+tb_test1<-window(tb, start=c(2018, 1))
+
+
+#Original time series plot of data
+autoplot(tb,ylab = "T-Bill rates")
+
+#Transforming data to obtain stable variance
+lambda1<-BoxCox.lambda(tb_train1)
+tb_train_transformed <- BoxCox(tb_train1, lambda =lambda1)
+tb_test_transformed <- BoxCox(tb_test1, lambda =lambda1)
+Tb_transformed <- BoxCox(tb, lambda =lambda1)
+
+#Plotting Transformed data 
+autoplot(tb_train_transformed)
+ggAcf(tb_train_transformed)
+ggPacf(tb_train_transformed)
+
+#Differencing to obtain stationarity
+tb_train_diff_transformed=diff(tb_train_transformed)
+tb_test_diff_transformed=diff(tb_test_transformed)
+#Plotting Transformed and differenced data
+autoplot(tb_train_diff_transformed)
+ggAcf(tb_train_diff_transformed)
+ggPacf(tb_train_diff_transformed)
+
+#Testing order of differencing:
+nsdiffs(tb_train_transformed)
+#0
+ndiffs(tb_train_transformed)
+#1, confirming results of kpss test below
+
+#KPSS test for stationarity
+#install.packages("urca")
+library(urca)
+summary(ur.kpss(tb_train_diff_transformed))
+ndiffs(tb_train_diff_transformed)
+#0
+
+```
+
+###Basic Models###
+```{r}
+
+mean_tb<-meanf(tb_train_diff_transformed, h=22)
+naive_tb<-naive(tb_train_diff_transformed, h=22)
+snaive_tb<-snaive(tb_train_diff_transformed, h=22)
+drift_tb<- rwf(tb_train_diff_transformed, drift=TRUE, h=22)
+diff_tb_transformed <- diff(BoxCox(tb, lambda =lambda1))
+length(diff_tb_transformed)
+length(tb_train_diff_transformed)
+tb.test<- window(diff_tb_transformed,  start=c(2018, 1))
+plot(diff_tb_transformed, ylab = "Forecast of Differenced Rates", main = "Forecast Results from Simple Forecast Methods")
+lines(mean_tb$mean, col = "red")
+lines(naive_tb$mean, col = "blue")
+lines(snaive_tb$mean, col = "yellow")
+lines(drift_tb$mean, col = "green")
+lines(tb.test,col = "orange")
+legend("topright", legend = c("mean","naive","snaive","drift","true data"),
+       col = c("red","blue","yellow","green","orange"),lty = 1:2,cex = 0.3) 
+```
+
+######ETS model#####
+```{r}
+
+object<-ets(tb_train_transformed)
+#install.packages("forecast")
+library(forecast)
+fit4<-predict(object,
+               h=22,
+               level=c(80,95), fan=FALSE,
+               simulate=FALSE, bootstrap=FALSE,
+               npaths=5000, PI=TRUE,
+               lambda=object$lambda, biasadj=FALSE
+               )
+autoplot(fit4, ylab = "Transformed T-Bill Rates")
+# plot(tb_train_transformed,lwd=3,col="black")
+# lines(object$state,lwd=1,col="red")
+accuracy(fit4,tb_test_transformed)
+summary(fit4)
+#AIC     AICc      BIC 
+#914.2691 914.3140 927.1326 
+ets.aicc <- 914.3140
+ets.aic <- 914.2691
+ets.rmse <- 0.1948937
+ets.mae <- 0.17693830
+ets.mape <- 21.42893
+ets.mase <- 0.4204676
+checkresiduals(fit4)
+#Ljung-Box test
+
+#data:  Residuals from ETS(A,N,N)
+#Q* = 135.5, df = 22, p-value < 2.2e-16
+
+#Model df: 2.   Total lags used: 24
+
+```
+###### ARIMA #####
+```{r Forecasting}
+
+#AUTO ARIMA
+fit5 <- auto.arima(tb_train_transformed)
+#install.packages("forecast")
+library(forecast)
+library(ggplot2)
+library(tidyverse)
+forecast(fit5,h=22) %>% autoplot(include=538)
+AIC(fit5)
+# ARIMA(3,1,4)(1,0,1)[12] 
+#[1] -913.0205
+
+ggAcf(tb_train_transformed)
+ggPacf(tb_test_transformed)
+ggAcf(tb_train_diff_transformed)
+
+# ARIMA LOOP ##
+# aic_all = c()
+# 
+# for (i in 0:6){
+#    for (j in 0:6){
+#      for (m in 0:3){
+#        for (n in 0:3){
+#         fit=arima(tb_train_transformed,order = c(i,1,j),seasonal=c(m,0,n))
+#          aic = fit$aic
+#          aic_tmp = c(i,j,m,n,aic)
+#          aic_all = rbind(aic_all,aic_tmp)
+#        }
+#      }
+#    }
+#  }
+#  
+#  z=which.min(aic_all[,5])
+#  combos=cbind(1:784,aic_all)
+#  combos[z,]
+
+#this chooses an ARIMA(4,1,5) model
+#AIC = -919.7687
+
+fit6=arima(tb_train_transformed,order=c(4,1,5))
+fit6 %>% forecast(h=22) %>% autoplot(include=538)
+r.hat6<-predict(fit6,22)$pred
+accuracy(r.hat6,tb_test_transformed)
+AIC(fit6)
+#[1] -919.7687
+arima.aic <- AIC(fit6)
+arima.rmse <- 0.1901198
+arima.mae <- 0.1763157
+arima.mape <- 21.70815
+
+
+
+checkresiduals(fit6)
+
+# Ljung-Box test
+# 
+# data:  Residuals from ARIMA(4,1,5)
+# Q* = 28.349, df = 15, p-value = 0.01948
+# 
+# Model df: 9.   Total lags used: 24
+
+```
+###### GARCH model ######
+```{r}
+###### GARCH model ######
+
+#fit the ARCH model
+#install.packages("fGarch")
+library(fGarch)
+fit.arch = garchFit(~garch(1,0),data=tb_train_transformed,trace=F)
+arch.mae<-mean(abs(fit.arch@residuals))
+arch.mse<-mean((fit.arch@residuals)^2)
+arch.mape<-mean(abs((fit.arch@residuals)/tb_train_transformed))*100
+arch.rmse <- sqrt(mean((fit.arch@residuals)^2))
+
+cbind(arch.mae,arch.rmse,arch.mape)
+#    arch.mae arch.rmse arch.mape
+#[1,] 1.148736  1.628596  240.1895
+summary(fit.arch)
+arch.aic <- 1.884714
+#    AIC      BIC      SIC     HQIC 
+#1.884714 1.909401 1.884647 1.894388 
+
+#fit the GARCH model 
+fit.garch = garchFit(~garch(1,1),data=tb_train_transformed,trace=F)
+summary(fit.garch)
+#AIC      BIC      SIC     HQIC 
+#1.888563 1.921478 1.888444 1.901461 GARCH is unnecessary, the p-value for beta is 0.457
+mae.garch<-mean(abs(fit.garch@residuals))
+mse.garch<-mean((fit.garch@residuals)^2)
+mape.garch<-mean(abs((fit.garch@residuals)/tb_train_transformed))*100
+cbind(mae.garch,mse.garch,mape.garch)
+# mae.garch mse.garch mape.garch
+#[1,]  1.148765   2.65285   240.2336
+
+
+# r.hat.garch<-predict(fit.garch,134)$pred
+# accuracy(r.hat.garch,tb_test_transformed)
+
+#Obtain standardized residuals
+b=residuals(fit.arch,standardize=T)
+plot(b,type='l')
+
+#the residual plot show that it’s not a good fit
+#To check adequacy, check both Ljung-Box of the residuals and the residuals squared
+Box.test(b,10,type='Ljung')
+#p-value is extremely small
+#To check the adequacy of the mean equation
+Box.test(b^2,10,type='Ljung')
+#thus the ARCH model itself is far from enough though the ARCH effect exists
+
+
+##GARCH LOOP
+aic_all2 = c()
+
+for (i in 1:4){
+  for (j in 0:3){
+    
+
+        fit_garch_loop=garchFit(substitute(~ arma(4,5)+garch(p,q),list(p=i, q=j)),data=tb_train_diff_transformed,trace=F)
+        
+        aic2 = fit_garch_loop@fit$ics[1]
+        aic_tmp2 = c(i,j,aic2)
+        aic_all2 = rbind(aic_all2,aic_tmp2)
+
+  }
+}
+
+z2=which.min(aic_all2[,3])
+combos2=cbind(1:16,aic_all2)
+combos2[z2,]
+#                 i         j         AIC 
+#2.000000  1.000000  1.000000 -2.077399 
+
+#TEST
+set.seed(777)
+fit777=garchFit(~arma(4,5)+garch(1,1),data=tb_train_diff_transformed,trace=F)
+summary(fit777)
+# AIC       BIC       SIC      HQIC 
+#-2.077399 -1.970265 -2.078632 -2.035413
+mae.cob<-mean(abs(fit777@residuals))
+mse.cob<-mean((fit777@residuals)^2)
+mape.cob<-mean(abs((fit777@residuals)/tb_train_diff_transformed))*100
+cbind(mae.cob,mse.cob,mape.cob)
+#  mae.cob    mse.cob mape.cob
+#[1,] 0.06922825 0.00970512      Inf
+
+#test for Arch effect
+fit777.residuals <- fit777@residuals
+library(fpp2)
+ggAcf(fit777.residuals)
+pacf(fit777.residuals^2)
+log(538)
+#6.287859
+#pred.garch1=predict(fit777,21)
+#ARCH effect exists. Garch model can be used.
+
+#forecast
+#install.packages("rugarch")
+library(rugarch)
+library(fGarch)
+spec <- ugarchspec(variance.model = list(model = "sGARCH", 
+                                         garchOrder = c(1, 2), 
+                                         submodel = NULL, 
+                                         external.regressors = NULL, 
+                                         variance.targeting = FALSE), 
+
+                   mean.model     = list(armaOrder = c(4, 5), 
+                                         external.regressors = NULL, 
+                                         distribution.model = "norm", 
+                                         start.pars = list(), 
+                                         fixed.pars = list()))
+
+garch <- ugarchfit(spec = spec, data = tb_train_diff_transformed, solver.control = list(trace=0))
+pred.garch<-ugarchforecast(garch,n.ahead = 21)
+
+pred.garch11<- ts(fitted(pred.garch), frequency=12, start=c(2018, 1))
+
+###Backtransforming GARCH 
+#install.packages("xts")
+library(xts)
+library(dplyr)
+final_value<- tb_train_transformed [length(tb_train_transformed)] 
+pred.garch11[1] <- final_value+pred.garch11[1]
+dates   <- seq(Sys.Date(), by="days", length=22)
+sim     <- rnorm(22)
+tsdata  <- xts(sim, order.by = dates)
+pred.garch1<-tsdata
+for (i in 2:22) 
+  { 
+  pred.garch1[i] = pred.garch11[i]+ as.double(pred.garch11[i-1])
+  } 
+plot.garch1<-plot(pred.garch1)
+plot.garch1
+
+plot(1:21, tb_test_diff_transformed,type='l',col='blue',lwd=2,xlim=c(1,21),xlab='Month',ylab = 'T-bill rates (transformed)')
+lines( 1:21,fitted(pred.garch), type="o",pch=24, col="red",lwd=2) 
+GARCH.mspe=mean((fitted(pred.garch)- tb_test_diff_transformed)^2) 
+#accuracy(fitted(pred.garch),tb_test_diff_transformed)
+GARCH.mspe
+#0.00523707
+#(fitted(pred.garch)
+summary(fit777)
+#AIC       BIC       SIC      HQIC 
+#-2.077399 -1.970265 -2.078632 -2.035413 
+garch.aic <- -2.077399
+garch.rmse <- sqrt(mean((fitted(pred.garch)- tb_test_diff_transformed)^2))
+garch.mape <-  100*(mean(abs((fitted(pred.garch)- tb_test_diff_transformed)/tb_test_diff_transformed)))
+garch.mae <- mean(abs(fitted(pred.garch)- tb_test_diff_transformed))
+#garch.mase <- mean(abs(fitted(pred.garch)-tb_test_transformed)/sum())
+cbind(garch.mae,garch.rmse,garch.mape)
+#    garch.mae garch.rmse garch.mape
+#[1,]  0.052223 0.07237151  -33.38917
+checkresiduals(fit777@residuals)
+Box.test(fit777@fitted)
+# Box-Pierce test
+# 
+# data:  fit777@fitted
+# X-squared = 16.364, df = 1, p-value = 5.227e-05
+
+
+
+```
+#####SETAR MODEL##########
+```{r}
+
+
+#install.packages('tsDyn')
+library(tsDyn)
+fit8=linear(tb_train_transformed, m=1)#linear model
+summary(fit8)
+fit9= aar(tb_train_transformed, m=1) #non-linear additive AR model
+summary(fit9)
+Box.test(fit8$residuals,lag=10,type='Ljung')
+Box.test(fit9$residuals,lag=10,type='Ljung')
+
+AIC(fit8) #-2285.158
+AIC(fit9) #-2269.158; linear model is better
+
+
+fit.setar1<-setar(tb_train_transformed, m=2, thDelay=1)  
+summary(fit.setar1)
+AIC(fit.setar1) #-2374.759
+acf(fit.setar1$residuals) #plot: project_setar1
+Box.test(fit.setar1$residuals,lag=10,type='Ljung') # 3.835e-06
+pred1=predict(fit.setar1,n.ahead=22)
+
+mean((pred1-as.numeric(tb_test_transformed))^2) #MSE: 0.1812498
+accuracy(pred1,tb_test_transformed)
+# ME      RMSE       MAE      MPE     MAPE      ACF1 Theil's U
+# Test set 0.3877714 0.4257344 0.3877714 43.21572 43.21572 0.7980753  5.051177
+checkresiduals(fit.setar1)
+
+fit.setar2 <- setar(tb_train_transformed, m=3, thDelay=1)
+summary(fit.setar2)
+AIC(fit.setar2) # -2394.382
+acf(fit.setar2$residuals) #plot: project_setar2
+Box.test(fit.setar2$residuals,lag=10,type='Ljung') #0.0004806
+pred2=predict(fit.setar2,n.ahead=22)
+mean((pred2-as.numeric(tb_test_transformed))^2) #MSE:  0.2749303
+
+
+fit.setar4 <- setar(tb_train_transformed, m=4, thDelay=1)
+summary(fit.setar4)
+AIC(fit.setar4) #-2402.722
+acf(fit.setar4$residuals) #plot: project_setar4
+Box.test(fit.setar4$residuals,lag=10,type='Ljung') #0.01163
+pred4=predict(fit.setar4,n.ahead=22)
+mean((pred4-as.numeric(tb_test_transformed))^2) #MSE: 0.2237386
+
+fit.setar5 <- setar(tb_train_transformed, m=5, thDelay=1)
+summary(fit.setar5)
+AIC(fit.setar5) #-2404.35, only improved by a slight amount. Selecting fit.setar4
+acf(fit.setar5$residuals) #plot: project_setar4
+Box.test(fit.setar5$residuals,lag=10,type='Ljung') # 0.00919
+pred4=predict(fit.setar5,n.ahead=22)
+mean((pred4-as.numeric(tb_test_transformed))^2) #MSE: 0.2558239
+
+setar.aic <- -2402.722
+setar.mae<-mean(abs(fit.setar4$residuals))
+setar.rmse<-sqrt(mean((fit.setar4$residuals)^2))
+setar.mape<-mean(abs((fit.setar4$residuals)/tb_train_transformed[1:516]))*100
+c(setar.mae,setar.rmse,setar.mape)
+#[1] 0.06464902 0.08821089 8.38877628
+
+```
+#########LSTAR MODEL#########
+```{r}
+
+
+fit.lstar <- lstar(tb_train_transformed, m=4, thDelay=1)
+AIC(fit.lstar) #-2400.388
+lstar.aic <- -2400.388
+checkresiduals(fit.lstar$residuals)
+pred.lstar <- predict(fit.lstar, n.ahead=22)
+Box.test(fit.lstar$residuals,lag = 9, type = "Ljung")
+#Box-Ljung test
+
+#data:  fit.lstar$residuals
+#X-squared = 21.408, df = 9, p-value = 0.01096
+accuracy(pred.lstar, tb_test_transformed)
+lstar.rmse <- 0.4782705
+lstar.mae <- 0.4416052
+lstar.mape <- 49.96487
+plot(1:22,tb_test_transformed,type='l',col='black',lwd=2,xlim=c(1,22),xlab='Month',ylab = 't-bill rate')
+lines( 1:22, pred.lstar, type="o",pch=24, col="red",lwd=2)
+
+
+```
+#########Neural Network Model#########
+```{r}
+
+set.seed(11)
+fit.nn<-nnetar(tb_train_transformed)
+summary(fit.nn)
+pred.nn=predict(fit.nn,22)
+plot(1:22,tb_test_transformed,type='l',col='black',lwd=2,xlim=c(1,22),xlab='Month',ylab = 't-bill rate')
+lines(1:22,pred.nn$mean, type="o",pch=24, col="red",lwd=2) 
+accuracy(pred.nn,tb_test_transformed)
+nn.rmse <- 0.72675805
+nn.mae <- 0.53558385
+nn.mape <- 0.53558385
+nn.mase <- -73.245918
+#  ME       RMSE        MAE        MPE      MAPE      MASE        ACF1 Theil's U
+# Training set  0.0001973782 0.07235805 0.05513584  -3.910303  8.847313 0.1310221 -0.03272649        NA
+# Test set     -0.5308377243 0.72675805 0.53558385 -73.245918 73.927265 1.2727354  0.86170642  11.39644
+
+checkresiduals(fit.nn)
+fit.nn%>%predict(22)%>%autoplot()
+Box.test(fit.nn$residuals,lag = 9, type='Ljung')
+# Box-Ljung test
+# 
+# data:  fit.nn$residuals
+# X-squared = 1.55, df = 9, p-value = 0.9968
+
+
+
+
+
+
+```
+
+####regression#####
+```{r}
+
+head(tb.rates)
+unemployment <- ts(tb.rates$unemployment, frequency=12, start=c(1975, 1))
+unemployment_train1 <- window(unemployment, end = c(2017,12))
+unemployment_test1<-window(unemployment, start=c(2018, 1))
+gdp <- ts(tb.rates$unemployment, frequency=12, start=c(1975, 1))
+gdp_train1 <- window(gdp, end = c(2017,12))
+gdp_test1<-window(gdp, start=c(2018, 1))
+return <- ts(tb.rates$stock_return_nominal , frequency=12, start=c(1975, 1))
+return_train1 <- window(return, end = c(2017,12))
+return_test1<-window(return, start=c(2018, 1))
+rr <- ts(tb.rates$stock_return_real , frequency=12, start=c(1975, 1))
+rr_train1 <- window(rr, end = c(2017,12))
+rr_test1<-window(rr, start=c(2018, 1))
+cu <- ts(tb.rates$currency, frequency=12, start=c(1975, 1))
+cu_train1 <- window(cu, end = c(2017,12))
+cu_test1<-window(cu, start=c(2018, 1))
+#install.packages("MASS")
+library(MASS)
+reg1 <- tslm(tb_train_transformed~unemployment_train1+return_train1+cu_train1+gdp_train1)
+summary(reg1)
+reg2 <- tslm(tb_train_transformed~unemployment_train1+return_train1+cu_train1)
+summary(reg2)
+AIC(reg2)
+reg3<- tslm(tb_train_transformed~unemployment_train1)
+AIC(reg3)
+df <-data.frame(unemployment_test1,return_test1,cu_test1)
+names <-c("unemployment_train1","return_train1","cu_train1")
+colnames(df) <- names
+fcast <- predict.lm(reg2, newdata =df,h=22)
+plot(fcast)
+summary(reg2)
+checkresiduals(reg2)
+#residuals are not white noise
+accuracy(fcast,tb_test_transformed)
+reg.aic <- 1059.271
+reg.rmse <- 2.473038
+reg.mae <- 2.464469
+reg.mape <- 300.0599
+#the model chosen is tb~unemployment+stock_return_nominal+currency
+#gives unrealistic pred
+```
+
+
+#####prediction graph#####
+```{r}
+# ETS FIT4
+#ARIMA r.hat6
+# GARCH pred.garch$meanForecast
+#setar pred4 
+ #lstar pred.lstar
+ #network pred.nn
+plot(fcast)
+par(mfrow=c(1,1))
+plot(tb_test_transformed,col='black',xlab='time',ylab = '',ylim=c(0,2))
+lines( r.hat6, type="l",pch=2, col="chocolate1")
+lines(pred.garch1, type="l",pch=2, col="cyan4")
+lines( pred4, type="l",pch=24, col="green",lwd = 0.5)
+lines( pred.lstar, type="l",pch=24, col="blue",lwd=2)
+lines( pred.nn$mean, type="l",pch=24, col="red",lwd=2)
+legend('topleft',c('True', 'pred.ARIMA', 'pred.garch', 'pred.setar',
+                  'pred.lstar','pred.nn'),lty=rep(1,5),
+       col=c('black','chocolate1', 'cyan4','green','blue','red'),cex = 0.5)
+
+```
+```{r}
+cbind(ets.aic,arima.aic,garch.aic,setar.aic,lstar.aic,reg.aic)
+#ets.aic arima.aic garch.aic setar.aic lstar.aic  reg.aic
+#914.2691 -919.7686 -2.077399  -2404.35 -2400.388 1059.271
+
+cbind(ets.mae,arima.mae,garch.mae,setar.mae,lstar.mae,reg.mae)
+#ets.mae arima.mae garch.mae  setar.mae lstar.mae  reg.mae
+#0.1769383 0.1763157 0.6039189 0.06464902 0.4416052 2.464469
+
+cbind(ets.mape,arima.mape,garch.mape, setar.mape,lstar.mape,reg.mape)
+#ets.mape arima.mape garch.mape  setar.mape lstar.mape reg.mape
+#21.42893   21.70815   -33.38917  8.388776   49.96487 300.0599
+
+cbind(ets.rmse,arima.rmse,setar.rmse,lstar.rmse,reg.rmse)
+#ets.rmse arima.rmse garch.rmse setar.rmse lstar.rmse reg.rmse
+#0.1948937  0.1901198 0.07237151  0.08821089  0.4782705 2.473038
+```
