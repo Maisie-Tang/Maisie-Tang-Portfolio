@@ -1,0 +1,40 @@
+March 2020 Oregon County Precipitation
+Units: Inches
+Missing: -99
+"Location ID","Location","Value","Rank","1901-2000 Mean","Anomaly (1901-2000 base period)"
+OR-001,"Baker County",1.5,40,2.07,-0.57
+OR-003,"Benton County",4.4,35,6.67,-2.27
+OR-005,"Clackamas County",5.72,35,8.07,-2.35
+OR-007,"Clatsop County",6.3,22,9.79,-3.49
+OR-009,"Columbia County",3.18,14,6.06,-2.88
+OR-011,"Coos County",5.03,26,8.35,-3.32
+OR-013,"Crook County",1.07,49,1.3,-0.23
+OR-015,"Curry County",5.46,20,10.78,-5.32
+OR-017,"Deschutes County",1.75,39,2.25,-0.5
+OR-019,"Douglas County",3.88,27,5.9,-2.02
+OR-021,"Gilliam County",0.71,44,0.94,-0.23
+OR-023,"Grant County",1.86,60,2.07,-0.21
+OR-025,"Harney County",1.17,66,1.23,-0.06
+OR-027,"Hood River County",4.35,35,6.13,-1.78
+OR-029,"Jackson County",2.24,22,3.95,-1.71
+OR-031,"Jefferson County",1.2,38,1.6,-0.4
+OR-033,"Josephine County",2.81,17,6.27,-3.46
+OR-035,"Klamath County",2.25,47,2.79,-0.54
+OR-037,"Lake County",1.45,73,1.42,0.03
+OR-039,"Lane County",4.86,27,7.16,-2.3
+OR-041,"Lincoln County",6.31,26,10.41,-4.1
+OR-043,"Linn County",5.66,37,7.63,-1.97
+OR-045,"Malheur County",0.98,54,1.21,-0.23
+OR-047,"Marion County",5.03,36,6.84,-1.81
+OR-049,"Morrow County",0.98,39,1.35,-0.37
+OR-051,"Multnomah County",4.69,34,6.61,-1.92
+OR-053,"Polk County",4.68,31,7.55,-2.87
+OR-055,"Sherman County",0.89,52,1.13,-0.24
+OR-057,"Tillamook County",6.66,22,11.4,-4.74
+OR-059,"Umatilla County",1.4,29,2.08,-0.68
+OR-061,"Union County",2.23,34,2.99,-0.76
+OR-063,"Wallowa County",1.91,27,2.72,-0.81
+OR-065,"Wasco County",1.24,31,1.81,-0.57
+OR-067,"Washington County",3.35,23,5.99,-2.64
+OR-069,"Wheeler County",1.36,64,1.52,-0.16
+OR-071,"Yamhill County",3.63,22,6.73,-3.1

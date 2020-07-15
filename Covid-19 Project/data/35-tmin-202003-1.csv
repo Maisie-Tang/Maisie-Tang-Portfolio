@@ -1,0 +1,40 @@
+March 2020 Oregon County Minimum Temperature
+Units: Degrees Fahrenheit
+Missing: -99
+"Location ID","Location","Value","Rank","1901-2000 Mean","Anomaly (1901-2000 base period)"
+OR-001,"Baker County",27.6,92,25.6,2.0
+OR-003,"Benton County",34.8,30,36.6,-1.8
+OR-005,"Clackamas County",32.0,54,32.7,-0.7
+OR-007,"Clatsop County",33.5,40,34.6,-1.1
+OR-009,"Columbia County",34.2,55,34.6,-0.4
+OR-011,"Coos County",35.3,33,36.9,-1.6
+OR-013,"Crook County",24.7,36,25.9,-1.2
+OR-015,"Curry County",35.2,38,36.4,-1.2
+OR-017,"Deschutes County",23.1,32,24.7,-1.6
+OR-019,"Douglas County",32.5,35,33.9,-1.4
+OR-021,"Gilliam County",30.6,41,31.7,-1.1
+OR-023,"Grant County",25.4,70,24.7,0.7
+OR-025,"Harney County",26.1,72,25.3,0.8
+OR-027,"Hood River County",29.6,67,29.5,0.1
+OR-029,"Jackson County",30.4,49,31.2,-0.8
+OR-031,"Jefferson County",26.7,28,28.6,-1.9
+OR-033,"Josephine County",31.7,39,33,-1.3
+OR-035,"Klamath County",24.4,75,23.8,0.6
+OR-037,"Lake County",24.6,68,24.3,0.3
+OR-039,"Lane County",32.3,28,34.1,-1.8
+OR-041,"Lincoln County",35.5,28,37.5,-2.0
+OR-043,"Linn County",31.4,21,33.3,-1.9
+OR-045,"Malheur County",28.3,73,27.3,1.0
+OR-047,"Marion County",32.4,27,34.2,-1.8
+OR-049,"Morrow County",30.2,41,30.9,-0.7
+OR-051,"Multnomah County",35.3,58,35.7,-0.4
+OR-053,"Polk County",34.5,31,36.3,-1.8
+OR-055,"Sherman County",30.5,36,31.9,-1.4
+OR-057,"Tillamook County",34.1,50,35.1,-1.0
+OR-059,"Umatilla County",30.3,57,30.1,0.2
+OR-061,"Union County",26.9,78,26,0.9
+OR-063,"Wallowa County",25.8,78,24.6,1.2
+OR-065,"Wasco County",29.5,45,30.4,-0.9
+OR-067,"Washington County",34.7,51,35.5,-0.8
+OR-069,"Wheeler County",27.1,36,28.3,-1.2
+OR-071,"Yamhill County",34.8,36,36.5,-1.7

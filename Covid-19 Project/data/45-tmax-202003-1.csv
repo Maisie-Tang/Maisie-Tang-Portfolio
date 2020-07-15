@@ -1,0 +1,43 @@
+March 2020 Washington County Maximum Temperature
+Units: Degrees Fahrenheit
+Missing: -99
+"Location ID","Location","Value","Rank","1901-2000 Mean","Anomaly (1901-2000 base period)"
+WA-001,"Adams County",52.4,74,51.8,0.6
+WA-003,"Asotin County",49.8,83,48.5,1.3
+WA-005,"Benton County",55.4,62,55.8,-0.4
+WA-007,"Chelan County",43.1,79,42.4,0.7
+WA-009,"Clallam County",46.4,52,47.2,-0.8
+WA-011,"Clark County",52.8,66,53.2,-0.4
+WA-013,"Columbia County",49.1,79,47.9,1.2
+WA-015,"Cowlitz County",50.8,77,50.4,0.4
+WA-017,"Douglas County",50.6,86,48.6,2.0
+WA-019,"Ferry County",44.2,83,43.1,1.1
+WA-021,"Franklin County",55.0,69,54.9,0.1
+WA-023,"Garfield County",49.5,83,48.1,1.4
+WA-025,"Grant County",53.9,81,52.9,1.0
+WA-027,"Grays Harbor County",50.0,33,51.7,-1.7
+WA-029,"Island County",51.7,65,51.8,-0.1
+WA-031,"Jefferson County",44.3,47,45.3,-1.0
+WA-033,"King County",46.2,51,47.2,-1.0
+WA-035,"Kitsap County",51.0,40,52.3,-1.3
+WA-037,"Kittitas County",46.0,73,45.7,0.3
+WA-039,"Klickitat County",50.8,86,49.6,1.2
+WA-041,"Lewis County",47.7,67,48,-0.3
+WA-043,"Lincoln County",49.7,75,49.1,0.6
+WA-045,"Mason County",48.7,46,49.8,-1.1
+WA-047,"Okanogan County",43.1,81,42.1,1.0
+WA-049,"Pacific County",50.6,35,52.4,-1.8
+WA-051,"Pend Oreille County",42.8,83,41.4,1.4
+WA-053,"Pierce County",45.6,47,46.8,-1.2
+WA-055,"San Juan County",50.2,53,50.7,-0.5
+WA-057,"Skagit County",45.2,63,45.5,-0.3
+WA-059,"Skamania County",44.8,78,44.4,0.4
+WA-061,"Snohomish County",44.9,48,46,-1.1
+WA-063,"Spokane County",48.4,82,47,1.4
+WA-065,"Stevens County",46.7,87,45.3,1.4
+WA-067,"Thurston County",51.7,47,52.7,-1.0
+WA-069,"Wahkiakum County",51.0,47,52.1,-1.1
+WA-071,"Walla Walla County",54.2,58,54.5,-0.3
+WA-073,"Whatcom County",42.9,54,43.6,-0.7
+WA-075,"Whitman County",51.2,83,49.8,1.4
+WA-077,"Yakima County",48.2,69,48.1,0.1

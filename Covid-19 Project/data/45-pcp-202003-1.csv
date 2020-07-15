@@ -1,0 +1,43 @@
+March 2020 Washington County Precipitation
+Units: Inches
+Missing: -99
+"Location ID","Location","Value","Rank","1901-2000 Mean","Anomaly (1901-2000 base period)"
+WA-001,"Adams County",0.61,39,0.93,-0.32
+WA-003,"Asotin County",0.95,23,1.59,-0.64
+WA-005,"Benton County",0.57,66,0.65,-0.08
+WA-007,"Chelan County",1.82,17,3.52,-1.7
+WA-009,"Clallam County",5.73,21,9.02,-3.29
+WA-011,"Clark County",4.53,28,6.86,-2.33
+WA-013,"Columbia County",1.41,17,2.74,-1.33
+WA-015,"Cowlitz County",6.13,34,8.32,-2.19
+WA-017,"Douglas County",0.57,47,0.85,-0.28
+WA-019,"Ferry County",0.99,34,1.42,-0.43
+WA-021,"Franklin County",0.61,51,0.79,-0.18
+WA-023,"Garfield County",1.09,22,1.85,-0.76
+WA-025,"Grant County",0.55,59,0.64,-0.09
+WA-027,"Grays Harbor County",6.15,17,10.06,-3.91
+WA-029,"Island County",2.12,48,2.35,-0.23
+WA-031,"Jefferson County",6.74,20,10.96,-4.22
+WA-033,"King County",6.08,44,7.23,-1.15
+WA-035,"Kitsap County",2.82,35,4.03,-1.21
+WA-037,"Kittitas County",1.93,23,3.14,-1.21
+WA-039,"Klickitat County",1.41,34,2.17,-0.76
+WA-041,"Lewis County",5.75,41,7.55,-1.8
+WA-043,"Lincoln County",0.65,36,1.06,-0.41
+WA-045,"Mason County",5.34,19,9.05,-3.71
+WA-047,"Okanogan County",0.86,21,1.84,-0.98
+WA-049,"Pacific County",6.81,30,9.92,-3.11
+WA-051,"Pend Oreille County",1.89,27,3,-1.11
+WA-053,"Pierce County",5.43,47,6.5,-1.07
+WA-055,"San Juan County",1.25,16,2.33,-1.08
+WA-057,"Skagit County",5.88,37,7.56,-1.68
+WA-059,"Skamania County",6.97,36,9.86,-2.89
+WA-061,"Snohomish County",6.32,38,8.25,-1.93
+WA-063,"Spokane County",0.99,19,1.81,-0.82
+WA-065,"Stevens County",1.11,26,1.84,-0.73
+WA-067,"Thurston County",3.66,37,5.12,-1.46
+WA-069,"Wahkiakum County",6.31,32,9.13,-2.82
+WA-071,"Walla Walla County",0.79,23,1.45,-0.66
+WA-073,"Whatcom County",5.44,43,6.47,-1.03
+WA-075,"Whitman County",0.93,19,1.64,-0.71
+WA-077,"Yakima County",1.63,29,2.55,-0.92

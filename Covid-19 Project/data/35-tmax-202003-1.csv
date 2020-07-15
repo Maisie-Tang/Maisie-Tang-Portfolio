@@ -1,0 +1,40 @@
+March 2020 Oregon County Maximum Temperature
+Units: Degrees Fahrenheit
+Missing: -99
+"Location ID","Location","Value","Rank","1901-2000 Mean","Anomaly (1901-2000 base period)"
+OR-001,"Baker County",48.5,97,45.2,3.3
+OR-003,"Benton County",53.0,67,53.6,-0.6
+OR-005,"Clackamas County",47.6,57,48.2,-0.6
+OR-007,"Clatsop County",50.2,53,51.1,-0.9
+OR-009,"Columbia County",51.8,72,52,-0.2
+OR-011,"Coos County",53.7,67,53.6,0.1
+OR-013,"Crook County",48.6,81,47.1,1.5
+OR-015,"Curry County",52.8,71,52.6,0.2
+OR-017,"Deschutes County",46.1,73,45.6,0.5
+OR-019,"Douglas County",51.8,77,51.1,0.7
+OR-021,"Gilliam County",52.3,81,51.3,1.0
+OR-023,"Grant County",46.3,82,44.6,1.7
+OR-025,"Harney County",48.1,81,46.1,2.0
+OR-027,"Hood River County",44.7,74,44.5,0.2
+OR-029,"Jackson County",51.0,66,50.8,0.2
+OR-031,"Jefferson County",49.6,77,48.8,0.8
+OR-033,"Josephine County",51.1,71,50.4,0.7
+OR-035,"Klamath County",46.6,75,45.6,1.0
+OR-037,"Lake County",46.5,75,45.3,1.2
+OR-039,"Lane County",50.2,76,50,0.2
+OR-041,"Lincoln County",52.4,69,52.8,-0.4
+OR-043,"Linn County",49.2,67,49.6,-0.4
+OR-045,"Malheur County",51.4,93,48.5,2.9
+OR-047,"Marion County",49.5,55,50.2,-0.7
+OR-049,"Morrow County",51.6,76,50.9,0.7
+OR-051,"Multnomah County",51.6,69,52,-0.4
+OR-053,"Polk County",53.2,81,52.4,0.8
+OR-055,"Sherman County",51.9,83,50.9,1.0
+OR-057,"Tillamook County",50.1,80,49.5,0.6
+OR-059,"Umatilla County",50.5,79,49.3,1.2
+OR-061,"Union County",46.3,93,43.9,2.4
+OR-063,"Wallowa County",45.4,94,43,2.4
+OR-065,"Wasco County",49.5,74,49.1,0.4
+OR-067,"Washington County",52.0,80,51.5,0.5
+OR-069,"Wheeler County",49.2,82,47.9,1.3
+OR-071,"Yamhill County",52.9,81,52.4,0.5
